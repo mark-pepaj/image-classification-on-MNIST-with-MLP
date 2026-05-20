@@ -1,15 +1,15 @@
-## Image Classification Using a Multi-Layer-Perceptron
+# Image Classification Using a Multi-Layer-Perceptron
 
-# Implementation of the MLP
-
-
-# Configuring the Network
+## Implementation of the MLP
 
 
-# Training
+## Configuring the Network
 
 
-# Testing
+## Training
 
 
-# Results from Experiments
+## Testing
+
+
+## Results from Experiments
