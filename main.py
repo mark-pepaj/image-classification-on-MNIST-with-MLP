@@ -101,7 +101,6 @@ for epoch in range(max_epochs):
     val_mismatches = val_total - val_correct
 
     print("----------------------------------------------------------------------------------")
-
     print(f"Epoch {epoch + 1}/{max_epochs}")
     print(f"Train loss: {train_loss:.4f} -- Train acc: {train_acc:.4f} -- mismatches: {train_mismatches}")
     print(f"Val loss: {val_loss:.4f} -- Val acc: {val_acc:.4f} -- mismatches: {val_mismatches}")
