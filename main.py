@@ -44,7 +44,7 @@ print(f"Using device {device}")
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-model = MLP(input_size=H * W, hidden_sizes=hidden_sizes, num_output_neurons=num_classes).to(device)
+model = MLP(input_size=H * W, hidden_sizes=hidden_sizes, num_output_neurons=num_classes, activations=[nn.Tanh(), nn.Tanh(), nn.Tanh()]).to(device)
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.CrossEntropyLoss()
 
