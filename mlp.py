@@ -5,15 +5,7 @@ import torch.optim as optim
 
 
 class MLP(nn.Module):
-    def __init__(self, input_size, hidden_sizes, num_output_neurons, activations=None):
-        """
-        Args:
-            input_size:         number of input features
-            hidden_sizes:       list of hidden layer widths, e.g. [128, 64]
-            num_output_neurons: number of output classes
-            activations:        nn.Module or list of nn.Module, one per hidden layer.
-                                Defaults to nn.Tanh() for all layers.
-        """
+    def __init__(self, input_size, hidden_sizes, num_output_neurons, activations=None, output_activation=None):
         super().__init__()
 
         if activations is None:
@@ -32,9 +24,15 @@ class MLP(nn.Module):
         ])
         self.activations = nn.ModuleList(activations)
         self.output_layer = nn.Linear(hidden_sizes[-1], num_output_neurons)
+        self.output_activation = output_activation
 
     def forward(self, x):
         for layer, act in zip(self.hidden_layers, self.activations):
             x = act(layer(x))
 
-        return self.output_layer(x)
+        x = self.output_layer(x)
+
+        if self.output_activation is not None:
+            x = self.output_activation(x)
+
+        return x
