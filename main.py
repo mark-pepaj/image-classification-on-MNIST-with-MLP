@@ -56,7 +56,7 @@ print(f"Using Device: {device}")
 
 print(f"Batch Size: {batch_size}")
 print(f"Hidden Layer(s): {hidden_sizes}")
-print(f"Activation Functions: {activations}")
+print(f"Activation Function(s): {activations}")
 print(f"Learning Rate: {learning_rate}")
 print(f"Max Epochs: {max_epochs}")
 
@@ -67,8 +67,8 @@ model = MLP(input_size=H * W, hidden_sizes=hidden_sizes, num_output_neurons=num_
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.CrossEntropyLoss()
 
-trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print(f"Number of trainable parameters: {trainable_params}")
+num_parameters = sum(p.numel() for p in model.parameters())
+print(f"Number of Parameters: {num_parameters}")
 
 
 for epoch in range(max_epochs):
