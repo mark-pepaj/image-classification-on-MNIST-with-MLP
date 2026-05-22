@@ -2,26 +2,41 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
+import torchvision
+import torchvision.transforms as transforms
+from torchvision import datasets
 import matplotlib.pyplot as plt
 
 from mlp import MLP
 
-transform = transforms.ToTensor()
+# augmentation
+random_rotate = transforms.RandomRotation(10) # 10 degrees
+random_affine = transforms.RandomAffine(degrees=10, translate=(0.1, 0.1), scale=(0.9, 1.1), shear=5)
+horizontal_flip = transforms.RandomHorizontalFlip(p=0.5) # prob that it flips
+vertical_flip = transforms.RandomVerticalFlip(p=0.5) # prob that it flips
+augment_shape = transforms.RandomResizedCrop((28, 28), scale=(0.5, 1), ratio=(0.5, 2))
+augment_color = transforms.ColorJitter(brightness=0.5, contrast=0, saturation=0, hue=0)
+
+train_augments = transforms.Compose([
+    random_affine,
+    transforms.ToTensor()
+    ])
+val_augments = transforms.Compose([transforms.ToTensor()])
+
 
 train_dataset = datasets.MNIST(
     root='./data', 
     train=True, 
     download=True,
-    transform=transform
+    transform=train_augments
 )
 
 # Load test data
-test_dataset = datasets.MNIST(
+val_dataset = datasets.MNIST(
     root='./data', 
     train=False, 
-    transform=transform
+    transform=val_augments
 )
 
 
@@ -30,23 +45,30 @@ test_dataset = datasets.MNIST(
 H = 28
 W = 28
 num_classes = 10
-batch_size = 128
+batch_size = 64
 hidden_sizes = [64, 64, 64]
+activations = [nn.Tanh(), nn.Tanh(), nn.Tanh()]
 max_epochs = 25
-learning_rate = 1e-3
+learning_rate = 3e-3
 
-#device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-device = "cpu"
-print(f"Using device {device}")
+device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+print(f"Using Device: {device}")
 
-
+print(f"Batch Size: {batch_size}")
+print(f"Hidden Layer(s): {hidden_sizes}")
+print(f"Activation Functions: {activations}")
+print(f"Learning Rate: {learning_rate}")
+print(f"Max Epochs: {max_epochs}")
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-model = MLP(input_size=H * W, hidden_sizes=hidden_sizes, num_output_neurons=num_classes, activations=[nn.Tanh(), nn.Tanh(), nn.Tanh()]).to(device)
+model = MLP(input_size=H * W, hidden_sizes=hidden_sizes, num_output_neurons=num_classes, activations=activations).to(device)
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.CrossEntropyLoss()
+
+trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print(f"Number of trainable parameters: {trainable_params}")
 
 
 for epoch in range(max_epochs):
